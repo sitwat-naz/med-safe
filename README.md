@@ -6,6 +6,9 @@ Med-Safe is an AI-powered system that reads medical reports
 abnormalities, verifies medications, and generates summaries 
 for both patients and healthcare professionals.
 
+## 🌐 Live Demo
+👉 https://medsafeai.streamlit.app
+
 ## Features
 - 📄 PDF medical report reading
 - 🖼️ Handwritten prescription reading (image support)
