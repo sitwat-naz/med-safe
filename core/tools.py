@@ -1,14 +1,24 @@
-import json
 import os
+import json
+import random
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
 load_dotenv()
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY")
-)
+def get_llm():
+    keys = [
+        os.getenv("GROQ_API_KEY_1"),
+        os.getenv("GROQ_API_KEY_2"),
+        os.getenv("GROQ_API_KEY_3"),
+        os.getenv("GROQ_API_KEY_4"),
+    ]
+    keys = [k for k in keys if k]
+    key = random.choice(keys)
+    return ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=key
+    )
 
 def check_abnormalities(lab_results: list) -> list:
     """
@@ -46,7 +56,7 @@ def check_abnormalities(lab_results: list) -> list:
     - Return ONLY the JSON array, no extra text
     """
 
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     content = response.content.strip()
 
     # Clean markdown if present
@@ -105,7 +115,7 @@ def verify_medications(medications: list) -> list:
     Return ONLY the JSON array, no extra text.
     """
 
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     content = response.content.strip()
 
     if content.startswith("```"):

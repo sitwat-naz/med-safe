@@ -1,13 +1,23 @@
 import os
+import random
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
 load_dotenv()
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY")
-)
+def get_llm():
+    keys = [
+        os.getenv("GROQ_API_KEY_1"),
+        os.getenv("GROQ_API_KEY_2"),
+        os.getenv("GROQ_API_KEY_3"),
+        os.getenv("GROQ_API_KEY_4"),
+    ]
+    keys = [k for k in keys if k]
+    key = random.choice(keys)
+    return ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=key
+    )
 
 def generate_patient_summary(analyzed_results: list,
                               patient_name: str) -> str:
@@ -42,7 +52,7 @@ def generate_patient_summary(analyzed_results: list,
     Keep it under 200 words.
     """
 
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return response.content
 
 
@@ -76,7 +86,7 @@ def generate_physician_brief(analyzed_results: list,
     Clinical judgment of a qualified physician is required."
     """
 
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return response.content
 
 
@@ -129,7 +139,7 @@ def generate_combined_summary(all_analyzed: list,
     
     Keep under 300 words.
     """
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return response.content
 
 
@@ -179,5 +189,5 @@ def generate_combined_physician_brief(all_analyzed: list,
     Use clinical language. Group related findings.
     End with disclaimer about AI-generated content.
     """
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return response.content

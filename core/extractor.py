@@ -1,20 +1,35 @@
 import os
 import base64
+import random
 from dotenv import load_dotenv
-from pypdf import PdfReader
 from langchain_groq import ChatGroq
+from pypdf import PdfReader
 
 load_dotenv()
 
-llm_text = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY")
-)
+def get_llm():
+    keys = [
+        os.getenv("GROQ_API_KEY_1"),
+        os.getenv("GROQ_API_KEY_2"),
+        os.getenv("GROQ_API_KEY_3"),
+        os.getenv("GROQ_API_KEY_4"),
+    ]
+    keys = [k for k in keys if k]
+    key = random.choice(keys)
+    return ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=key
+    )
 
-llm_vision = ChatGroq(
-    model="meta-llama/llama-4-scout-17b-16e-instruct",
-    api_key=os.getenv("GROQ_API_KEY")
-)
+def get_vision_key():
+    keys = [
+        os.getenv("GROQ_API_KEY_1"),
+        os.getenv("GROQ_API_KEY_2"),
+        os.getenv("GROQ_API_KEY_3"),
+        os.getenv("GROQ_API_KEY_4"),
+    ]
+    keys = [k for k in keys if k]
+    return random.choice(keys)
 
 REPORT_TYPES = {
     "lab": [
@@ -117,7 +132,7 @@ def extract_from_image(file_path: str) -> str:
     mime_type = mime_map.get(ext, "image/jpeg")
 
     from groq import Groq
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    client = Groq(api_key=get_vision_key())
 
     response = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
@@ -242,7 +257,7 @@ def parse_medical_data(raw_text: str) -> str:
         Return ONLY JSON, no extra text.
         """
 
-    response = llm_text.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return response.content
 
 def process_report(file_path: str):
