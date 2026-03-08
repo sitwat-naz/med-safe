@@ -12,8 +12,11 @@ def get_llm():
         os.getenv("GROQ_API_KEY_2"),
         os.getenv("GROQ_API_KEY_3"),
         os.getenv("GROQ_API_KEY_4"),
+        os.getenv("GROQ_API_KEY"),  # fallback to single key
     ]
-    keys = [k for k in keys if k]
+    keys = [k for k in keys if k]  # remove empty
+    if not keys:
+        raise ValueError("No Groq API key found!")
     key = random.choice(keys)
     return ChatGroq(
         model="llama-3.3-70b-versatile",
